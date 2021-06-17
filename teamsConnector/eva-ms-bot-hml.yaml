@@ -1,0 +1,144 @@
+###################################################################################################################
+##########################Deployment file for eva-msbot at K8S####################################################
+###################################################################################################################
+---
+################################################
+############## - Config Map -###################
+################################################
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "@project.artifactId@-config"
+  namespace: "eva"
+  labels:
+    app: "@project.artifactId@"
+data:
+  DATASOURCE: "jdbc:mysql://db-homo.eva.bot/evadb?useSSL=false"
+  USER: "eva"
+  PASSWORD: "KMcmlRlBuWTx1rzod4TslbzMyR1Da0"
+  PORT: "8080"
+  CACHETYPE: "redis"
+  REDISHOST: "eva-redis"
+  REDISPORT: "6379"
+  REDISPASSWORD: "020693"  
+  REDISKEEPALIVEJOB: "true"
+  REDISKEEPALIVETIME: "10000"
+  EVANLPURLWATSON: "http://eva-watson-nlp:8080"
+  EVANLPURLLUIS: "http://eva-luis-nlp:8080"
+  EVANLPURLDIALOGFLOW: "http://eva-dialogflow-nlp:8080"
+  EVANLPURLCLEVER: "http://eva-clever-nlp:8080"
+  CONN_TIMEOUT: "27000"
+  IDDLE_TIMEOUT: "10000"
+  MAXLIFE_TIME: "60000"
+  POOLSIZE: "10"
+---
+################################################
+############## - Service - #####################
+################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: @project.artifactId@
+  namespace: eva
+  labels:
+    app: @project.artifactId@
+    service: @project.artifactId@
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: @project.artifactId@
+---
+################################################
+############## - Deployment - ##################
+################################################
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: @project.artifactId@-v1
+  namespace: eva
+  labels:
+    app: @project.artifactId@
+    version: v1
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: @project.artifactId@
+        version: v1
+    spec:
+      containers:
+      - name: @project.artifactId@
+        image: gcr.io/calm-premise-168420/@project.artifactId@:@project.version@
+        env:
+        - name: "DATASOURCE"
+          valueFrom:
+            configMapKeyRef:
+              key: "DATASOURCE"
+              name: "@project.artifactId@-config"
+        - name: "USER"
+          valueFrom:
+            configMapKeyRef:
+              key: "USER"
+              name: "@project.artifactId@-config"
+        - name: "PASSWORD"
+          valueFrom:
+            configMapKeyRef:
+              key: "PASSWORD"
+              name: "@project.artifactId@-config"
+        - name: "PORT"
+          valueFrom:
+            configMapKeyRef:
+              key: "PORT"
+              name: "@project.artifactId@-config"
+        - name: "CACHETYPE"
+          valueFrom:
+            configMapKeyRef:
+              key: "CACHETYPE"
+              name: "@project.artifactId@-config"
+        - name: "REDISHOST"
+          valueFrom:
+            configMapKeyRef:
+              key: "REDISHOST"
+              name: "@project.artifactId@-config"
+        - name: "REDISPORT"
+          valueFrom:
+            configMapKeyRef:
+              key: "REDISPORT"
+              name: "@project.artifactId@-config"
+        - name: "REDISPASSWORD"
+          valueFrom:
+            configMapKeyRef:
+              key: "REDISPASSWORD"
+              name: "@project.artifactId@-config"
+        - name: "CACHETYPE"
+          valueFrom:
+            configMapKeyRef:
+              key: "CACHETYPE"
+              name: "@project.artifactId@-config"
+        - name: "REDISHOST"
+          valueFrom:
+            configMapKeyRef:
+              key: "REDISHOST"
+              name: "@project.artifactId@-config"
+        - name: "REDISPORT"
+          valueFrom:
+            configMapKeyRef:
+              key: "REDISPORT"
+              name: "@project.artifactId@-config"
+        - name: "REDISKEEPALIVEJOB"
+          valueFrom:
+            configMapKeyRef:
+              key: "REDISKEEPALIVEJOB"
+              name: "@project.artifactId@-config"
+        - name: "REDISKEEPALIVETIME"
+          valueFrom:
+            configMapKeyRef:
+              key: "REDISKEEPALIVETIME"
+              name: "@project.artifactId@-config"               
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+---

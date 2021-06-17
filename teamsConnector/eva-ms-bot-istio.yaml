@@ -1,0 +1,42 @@
+########################################################################################################################
+##########################Istio Configurations for eva-msbot, Tested on Istio 1.1.3####################################
+########################################################################################################################
+---
+######################################################
+############## - Destination Rule -###################
+######################################################
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: @project.artifactId@
+  namespace: eva
+spec:
+  host: @project.artifactId@
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+---
+#####################################################
+############## - Virtual Service -###################
+#####################################################
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: @project.artifactId@
+  namespace: eva
+spec:
+  hosts:
+  - "infobip-dev.eva.bot"
+  gateways:
+  - eva-gateway
+  http:
+  - match: 
+    - uri:
+        prefix: /    
+    route:
+    - destination:
+        host: @project.artifactId@
+        port:
+          number: 8080
+    timeout: 4s
