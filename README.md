@@ -2,7 +2,7 @@
 
 This connector has been created using [Bot Framework](https://dev.botframework.com), it shows how to incorporate eVA conversational flow.
 
-This application is a Spring Boot app and uses the Azure CLI and azure-webapp Maven plugin to deploy to Azure.
+This application is a Spring Boot app and uses the Azure CLI and azure-webapp Maven plugin to deploy to Azure..
 
 ## Prerequisites
 
